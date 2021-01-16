@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import com.koreait.cobox.exception.CartException;
 import com.koreait.cobox.model.domain.Cart;
+import com.koreait.cobox.model.domain.Member;
 
 @Repository
 public class MybatisCartDAO implements CartDAO{
@@ -22,8 +23,7 @@ public class MybatisCartDAO implements CartDAO{
 
 	@Override
 	public List selectAll(int member_id) {
-		// TODO Auto-generated method stub
-		return null;
+		return sqlSessionTemplate.selectList("Cart.selectAll", member_id);
 	}
 
 	@Override
@@ -33,6 +33,14 @@ public class MybatisCartDAO implements CartDAO{
 	}
 
 	@Override
+	public void duplicateCheck(Cart cart) throws CartException{
+		List list= sqlSessionTemplate.selectList("Cart.duplicateCheck", cart);
+		if(list.size()>0) {
+			throw new CartException("카트에 이미 상품이 담겨있습니다");
+		}
+	}
+	
+	@Override
 	public void insert(Cart cart) throws CartException{
 		int result = sqlSessionTemplate.insert("Cart.insert", cart);
 		if(result==0) {
@@ -41,15 +49,19 @@ public class MybatisCartDAO implements CartDAO{
 	}
 
 	@Override
-	public void update(Cart cart) {
-		// TODO Auto-generated method stub
-		
+	public void update(Cart cart) throws CartException{
+		int result = sqlSessionTemplate.update("Cart.update", cart);
+		if(result==0) {
+			throw new CartException("장바구니 수정에 실패했습니다");
+		}
 	}
 
 	@Override
-	public void delete(Cart cart) {
-		// TODO Auto-generated method stub
-		
+	public void delete(Member member) throws CartException{
+		int result = sqlSessionTemplate.delete("Cart.delete", member.getMember_id());
+		if(result==0) {
+			throw new CartException("장바구니 삭제에 실패했습니다");
+		}
 	}
 
 }

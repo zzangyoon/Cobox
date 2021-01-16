@@ -3,6 +3,7 @@ package com.koreait.cobox.client.controller.snack;
 import java.util.List;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +63,7 @@ public class SnackController implements ServletContextAware{
 	*/
 	//탑카테고리아이디에 맞는 상품 가져오기(동기)
 	@GetMapping(value="/snack/topcategory/list")
-	public ModelAndView getSnackTopcategoryList(int topcategory_id) {
+	public ModelAndView getSnackTopcategoryList(HttpServletRequest request, int topcategory_id) {
 		ModelAndView mav = new ModelAndView("client/snack/snackpage");
 		
 		List snackList = snackService.selectById(topcategory_id);
@@ -77,7 +78,7 @@ public class SnackController implements ServletContextAware{
 	
 	//전체상품 가져오기
 	@RequestMapping(value="/snack/list", method=RequestMethod.GET)
-	public ModelAndView getClientSnackList() {
+	public ModelAndView getClientSnackList(HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView("client/snack/snackpage");
 		
 		List snackList = snackService.selectAll();
@@ -101,8 +102,8 @@ public class SnackController implements ServletContextAware{
 	*/
 	
 	//상세보기
-	@GetMapping("/snack/detail")
-	public ModelAndView snackDetail(int snack_id) {
+	@RequestMapping(value="/snack/detail", method=RequestMethod.GET)
+	public ModelAndView snackDetail(HttpServletRequest request, int snack_id) {
 		Snack snack = snackService.select(snack_id);
 		
 		ModelAndView mav = new ModelAndView("client/snack/detail");

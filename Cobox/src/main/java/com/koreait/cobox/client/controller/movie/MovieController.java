@@ -41,9 +41,12 @@ public class MovieController implements ServletContextAware{
    @Override
    public void setServletContext(ServletContext servletContext) {
 	   this.servletContext = servletContext;
-	   fileManager.setSaveDir(servletContext.getRealPath(fileManager.getSaveDir()));
+		fileManager.setSaveSnackDir(fileManager.getSaveSnackDir());
+		fileManager.setSaveMovieDir(fileManager.getSaveMovieDir());
+		fileManager.setSaveExcelDir(fileManager.getSaveExcelDir());
+
 	   
-	   logger.debug(fileManager.getSaveDir());
+	   //logger.debug(fileManager.getSaveDir());
    }
    
  

@@ -15,7 +15,9 @@ import lombok.Data;
 public class FileManager {
 	private static final Logger logger = LoggerFactory.getLogger(FileManager.class);
 	private String saveSnackDir="/resources/data/snack";
-	private String saveDir="/resources/data";
+	private String saveMovieDir="/resources/data/movie"; 
+	private String saveExcelDir="/resources/data/excel"; 
+	
 	
 	public static String getExtend(String path) {
 		int lastIndex = path.lastIndexOf(".");

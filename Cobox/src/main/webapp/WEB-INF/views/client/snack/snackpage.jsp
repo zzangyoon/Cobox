@@ -1,3 +1,4 @@
+<%@page import="com.koreait.cobox.model.common.Formatter"%>
 <%@page import="com.koreait.cobox.model.domain.TopCategory"%>
 <%@page import="com.koreait.cobox.model.domain.Snack"%>
 <%@page import="java.util.List"%>
@@ -64,7 +65,7 @@
 			console.log(filename);
 			
 			$(".product_title_wrapper div").html(snack_name);
-			$(".product_title_wrapper b").html(price);
+			$(".product_title_wrapper p").html(price);
 			$(".fsz-15 p").html(detail);
 			$(".diblock img").attr({
 				src:"/resources/data/snack/"+snack_id+"."+filename
@@ -172,7 +173,7 @@
                                             </div>
                                             <div class="product-content">
                                                 <h3> <a class="title-3 fsz-16" href="#"> <%=snack.getSnack_name() %> </a> </h3>
-                                                <p class="font-3">Price: <span class="thm-clr"> <%=snack.getPrice() %> </span> </p>    
+                                                <p class="font-3">Price: <span class="thm-clr"> <%=Formatter.getCurrency(snack.getPrice()) %> </span> </p>    
                                             </div>
                                         </div>
                                     </div>
@@ -238,23 +239,10 @@
                                 <form id="cart_form" class="variations_form cart">
                                     <div class="row">
                                        
-                                        <div class="col-sm-4">
-                                            <div class="form-group selectpicker-wrapper">
-                                                <label class="fsz-15 title-3"> <b> 수량 선택 (최대 10개) </b> </label>
-                                                <div class="search-selectpicker selectpicker-wrapper">
-                                                    <select
-                                                        class="selectpicker input-price" data-live-search="false" data-width="100%"
-                                                        data-toggle="tooltip" title="1" id="snack_quantity">
-                                                        <%for(int i=1; i<=10; i++){ %>
-                                                        	<option value="<%=i %>"><%=i %></option>
-														<%} %>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        
                                         <div class="col-sm-6">
                                             <div class="form-group" id="btn_cartRegist">
-                                                <button type="button" class="single_add_to_cart_button button alt fancy-button left" >Add to cart</button>
+                                                <button type="button" class="single_add_to_cart_button button alt fancy-button left" >상세보기</button>
                                             </div>    
                                         </div>
                                     </div>

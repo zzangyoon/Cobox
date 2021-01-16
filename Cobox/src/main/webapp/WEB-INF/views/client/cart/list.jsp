@@ -1,7 +1,14 @@
+<%@page import="com.koreait.cobox.model.common.Formatter"%>
+<%@page import="com.koreait.cobox.model.domain.Cart"%>
+<%@page import="java.util.List"%>
 <%@ page contentType="text/html; charset=UTF-8"%>
+<%
+	List<Cart> cartList = (List)request.getAttribute("cartList");
+%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
+    	<%@ include file="../inc/header.jsp"%>
         <meta charset="utf-8">
         <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -33,10 +40,29 @@
        <script src="/resources/assets/plugins/iesupport/respond.js"></script>
        <![endif]-->
 
+
+	<script>
+	function delCart(){
+		if(confirm("장바구니를 모두 비우시겠습니까?")){
+			location.href="/client/cart/del";
+		}
+	}
+
+	function editCart() {
+		if(confirm("주문 수량을 변경하시겠습니까?")){
+			$("#cart-form").attr({
+				action:"/client/cart/edit",
+				method:"post"
+			});
+			$("#cart-form").submit();
+		}
+	}
+	
+	</script>
     </head>
 
     <body class="woocommerce-cart" itemscope="itemscope" itemtype="http://schema.org/WebPage">
-
+		<%@include file="../inc/top.jsp"%>
 
 
         <!-- CONTENT + SIDEBAR -->
@@ -48,12 +74,13 @@
                         <header class="entry-header diblock spc-15">
                             <!-- Post Title -->
                             <h2 class="fsz-18 title-3 pull-left" itemprop="headline">Your Cart</h2>
+                            <h2 class="fsz-15 title-3 drk-gry pull-right">CONTINUE SHOPPING</h2>
                         </header>
 
                         <!-- Main Content of the Post -->
                         <div class="cart-wrap">
                             <div class="woocommerce">
-                                <form action="checkout.html" method="post">
+                                <form id="cart-form">
                                     <table class="shop_table cart">
                                         <thead>
                                             <tr>
@@ -65,52 +92,59 @@
                                             </tr>
                                         </thead>
                                         <tbody>
+                                        	<tr>
+                                        		<td colspan="2">Snack</td>
+                                        		<td>Price</td>
+                                        		<td>Quantity</td>
+                                        		<td>Total</td>
+                                        	</tr>
                                         
-                                        
-                                        
+                                        	<%int sum=0; %>
+                                        	<%for(Cart cart : cartList){ %>
                                             <tr class="cart_item">
                                                 <td class="product-thumbnail">
                                                     <a href="single-product.html">
-                                                        <img  src="/resources/assets/img/products/cart-2.jpg" alt="poster_2_up" />
+                                                        <img  src="/resources/data/snack/<%=cart.getSnack_id() %>.<%=cart.getFilename() %>" alt="poster_2_up" />
                                                     </a>
                                                 </td>
                                                 <td class="product-name">
                                                     <div class="cart-product-title">
-                                                        <a href="single-product.html">FLUSAS DENIM <span class="thm-clr"> DRESS </span> </a>
+                                                        <a href="single-product.html"> <%=cart.getSnack_name() %><span class="thm-clr"> </span> </a>
                                                     </div>
 
-                                                    <p class="fsz-20 funky-font-2">Women Collection</p>
+                                                    
                                                 </td>
 
                                                 <td class="product-price">                                                    
-                                                    <p class="font-3 fsz-18 no-mrgn"> <b class="amount blk-clr">$125.00</b> </p>                                                   
+                                                    <p class="font-3 fsz-18 no-mrgn"> <b class="amount blk-clr"><%=Formatter.getCurrency(cart.getPrice()) %></b> </p>                                                   
                                                 </td>
 
                                                 <td class="product-quantity">
                                                     <div class="quantity input-group">
-                                                        <span class="input-group-btn">
-                                                            <button type="button" class="btn-number" data-type="plus" data-field="cart[b3e3e393c77e35a4a3f3cbd1e429b5dc][qty]">
-                                                                <i class="fa fa-chevron-up"></i>
-                                                            </button>
-                                                        </span>
-                                                        <input type="text" name="cart[b3e3e393c77e35a4a3f3cbd1e429b5dc][qty]" value="1 Pcs" title="Qty" class="input-text qty input-qty" size="4" />
-                                                        <span class="input-group-btn">
-                                                            <button type="button" class="btn-number" data-type="minus" data-field="cart[b3e3e393c77e35a4a3f3cbd1e429b5dc][qty]">
-                                                                <i class="fa fa-chevron-down"></i>
-                                                            </button>
-                                                        </span>
+														<span class="qty-minus" onclick="var effect = document.getElementById('qty<%=cart.getCart_id() %>'); var qty = effect.value; if( !isNaN( qty ) &amp;&amp; qty &gt; 1 ) effect.value--;return false;"><i class="fa fa-minus" aria-hidden="true"></i></span>
+														<input type="hidden" name="cart_id" value="<%=cart.getCart_id()%>">
+														<input type="number" name="quantity" class="qty-text" id="qty<%=cart.getCart_id() %>" step="1" min="1" max="99"  value="<%=cart.getQuantity()%>">
+														<span class="qty-plus" onclick="var effect = document.getElementById('qty<%=cart.getCart_id() %>'); var qty = effect.value; if( !isNaN( qty )) effect.value++;return false;"><i class="fa fa-plus" aria-hidden="true"></i></span>
                                                     </div>
                                                 </td>
-
+												<%
+													sum = sum + (cart.getPrice()*cart.getQuantity());
+												%>
                                                 <td class="product-subtotal">
-                                                    <p class="font-3 fsz-18 no-mrgn"> <b class="amount blk-clr">$125.00</b> </p>
+                                                    <p class="font-3 fsz-18 no-mrgn"> <b class="amount blk-clr"><%=Formatter.getCurrency(cart.getPrice()*cart.getQuantity())%></b> </p>
                                                     <a href="#" class="remove" title="Remove this item"> <i class="fa-times fa"></i> </a>
                                                 </td>
                                             </tr>
-                                            
-                                            
+                                            <%} %>
+                                            <tr>
+                                            	<td colspan="5" text-align="right">
+                                            		<a href="javascript:delCart()"><h4>clear cart</h4></a>
+                                					<a href="javascript:editCart()"><h4>Update cart</h4></a>
+                                            	</td>
+                                            </tr>
                                             
                                         </tbody>
+                                        
                                     </table>
                                 </form>
 
@@ -123,13 +157,9 @@
                                             <table>
                                                 <tr class="cart-subtotal">
                                                     <th>Sub Total:</th>
-                                                    <td><span class="drk-gry">$130.00</span></td>
+                                                    <td><span class="drk-gry"><%=Formatter.getCurrency(sum) %></span></td>
                                                 </tr>
 
-                                                <tr class="cart-discount">
-                                                    <th>Shipping Charge :</th>
-                                                    <td><span class="drk-gry">Free Shipping</span></td>
-                                                </tr>
                                                 <tr class="shipping">
                                                     <th>Promo Discount :</th>
                                                     <td>
@@ -138,7 +168,7 @@
                                                 </tr>
                                                 <tr class="order-total">
                                                     <th>Order Total</th>
-                                                    <td><strong><span class="amount">$115.00</span></strong> </td>
+                                                    <td><strong><span class="amount"><%=Formatter.getCurrency(sum) %></span></strong> </td>
                                                 </tr>
                                             </table>
                                         </div>
@@ -158,155 +188,7 @@
                 </main>
             </div>
             
-
-        
-
-        <!-- FOOTER -->
-        <footer class="site-footer clearfix" itemscope itemtype="https://schema.org/WPFooter">
-            <div class="site-main-footer container theme-container">
-                <div class="row">
-                    <div class="col-md-3 col-sm-6 clearfix">
-                        <section class="widget footer-widget widget_text clearfix">
-                            <div class="textwidget">
-                                <p class="fsz-35"> <span class="bold-font-3 wht-clr">GoShop</span> <span class="thm-clr funky-font">bikes</span> </p>
-                                <p>ECommerce HTML Template</p>
-                                <div class="author-info-social">
-                                    <a class="goshop-share rcc-google" href="http://google.com" rel="nofollow" target="_blank">
-                                        <i class="fa fa-google-plus"></i>
-                                    </a>
-                                    <a class="goshop-share rcc-twitter" href="http://twitter.com" rel="nofollow" target="_blank">
-                                        <i class="fa fa-twitter"></i>
-                                    </a>
-                                    <a class="goshop-share rcc-facebook" href="http://facebook.com" rel="nofollow" target="_blank">
-                                        <i class="fa fa-facebook"></i>
-                                    </a>
-                                    <a class="goshop-share rcc-linkedin" href="http://linkedin.com" rel="nofollow" target="_blank">
-                                        <i class="fa fa-linkedin"></i>
-                                    </a>
-                                    <a class="goshop-share rcc-pinterest" href="http://pinterest.com" rel="nofollow" target="_blank">
-                                        <i class="fa fa-pinterest-p"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </section>
-                    </div>
-
-                    <div class="col-md-3 col-sm-6 clearfix">
-                        <section class="widget footer-widget widget_nav_menu clearfix">
-                            <h6 class="widget-title">My Account</h6>
-                            <ul>
-                                <li class="menu-item"><a href="#">Personal Information</a></li>
-                                <li class="menu-item"><a href="#">Address</a></li>
-                                <li class="menu-item"><a href="#">Discount</a></li>
-                                <li class="menu-item"><a href="#">Order History</a></li>
-                            </ul>
-                        </section>
-                    </div>
-
-                    <div class="col-md-3 col-sm-6 clearfix">
-                        <section id="nav_menu-3" class="widget footer-widget widget_nav_menu clearfix">
-                            <h6 class="widget-title">Our Services</h6>
-                            <ul>
-                                <li class="menu-item"><a href="#">Shipping Return</a></li>
-                                <li class="menu-item"><a href="#">International Shipping</a></li>
-                                <li class="menu-item"><a href="#">Secure Shopping</a></li>
-                                <li class="menu-item"><a href="#">Affiliates</a></li>
-                                <li class="menu-item"><a href="#">F.A.Q</a></li>
-                            </ul>
-                        </section>
-                    </div>
-
-                    <div class="col-md-3 col-sm-6 clearfix">
-                        <section id="text-6" class="widget footer-widget widget_text clearfix">
-                            <h6 class="widget-title">Newsletter</h6>
-                            <div class="textwidget">
-                                Lorem ipsum dolor sit amet conseret adipiscing elit sed diam nonunem.
-                                <form class="mc4wp-form">
-                                    <p>
-                                        <label>Email address: </label>
-                                        <input type="email" name="EMAIL" placeholder="Your email address" required />
-                                    </p>
-
-                                    <p>
-                                        <button class="submit"> <i class="fa fa-envelope-o"></i> </button>                                      
-                                    </p>
-                                </form>
-                            </div>
-                        </section>
-                    </div>
-                </div>
-
-                <div class="post-footer">
-                    <div class="payment-systems text-center">
-                        <div class="item"> <a href="#"><img src="/resources/assets/img/extra/payment-1.png" alt=""></a> </div>
-                        <div class="item"> <a href="#"><img src="/resources/assets/img/extra/payment-2.png" alt=""></a> </div>
-                        <div class="item"> <a href="#"><img src="/resources/assets/img/extra/payment-3.png" alt=""></a> </div>
-                        <div class="item"> <a href="#"><img src="/resources/assets/img/extra/payment-4.png" alt=""></a> </div>
-                        <div class="item"> <a href="#"><img src="/resources/assets/img/extra/payment-5.png" alt=""></a> </div>
-                        <div class="item"> <a href="#"><img src="/resources/assets/img/extra/payment-6.png" alt=""></a> </div>
-                        <div class="item"> <a href="#"><img src="/resources/assets/img/extra/payment-7.png" alt=""></a> </div>
-                        <div class="item"> <a href="#"><img src="/resources/assets/img/extra/payment-8.png" alt=""></a> </div>
-                        <div class="item"> <a href="#"><img src="/resources/assets/img/extra/payment-1.png" alt=""></a> </div>
-                        <div class="item"> <a href="#"><img src="/resources/assets/img/extra/payment-2.png" alt=""></a> </div>
-                        <div class="item"> <a href="#"><img src="/resources/assets/img/extra/payment-5.png" alt=""></a> </div>
-                        <div class="item"> <a href="#"><img src="/resources/assets/img/extra/payment-3.png" alt=""></a> </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="subfooter text-center">
-                <div class="container theme-container">
-                    <p>Copyright &copy; <a href="#" class="thm-clr">jThemes Studio</a>.  All Right Reserved 2015</p>
-                </div>
-            </div>
-        </footer>
-
-        <!-- Search Popup -->
-        <div class="popup-box page-search-box">
-            <div>
-                <div class="popup-box-inner">
-                    <form>
-                        <input class="search-query" type="text" placeholder="Search and hit enter" />
-                    </form>
-                </div>
-            </div>
-            <a href="javascript:void(0)" class="close-popup-box close-page-search"><i class="fa fa-close"></i></a>
-        </div>
-        <!-- / Search Popup -->
-
-        <!-- Popup: Login 1 -->
-        <div class="modal fade login-popup" id="login-popup" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-lg">                
-                <button type="button" class="close close-btn popup-cls" data-dismiss="modal" aria-label="Close"> <i class="fa-times fa"></i> </button>
-
-                <div class="modal-content login-1 wht-clr">   
-                    <div class="login-wrap text-center">                        
-                        <h2 class="fsz-35 spcbtm-15"> <span class="bold-font-3 wht-clr">GoShop</span> <span class="thm-clr funky-font">fashion</span> </h2>
-                        <p class="fsz-20 title-3"> WELCOME TO OUR  WONDERFUL WORLD </p>
-                        <p class="fsz-15 bold-font-4"> Did you know that we ship to over <span class="thm-clr"> 24 different countries </span> </p>                       
-
-                        <div class="login-form">
-                            <a class="fb-btn btn spcbtm-15" href="#"> <i class="fa fa-facebook btn-icon"></i>Login with Facebook </a>
-
-                            <p class="bold-font-2 fsz-12 signup"> OR SIGN UP </p>
-
-                            <form class="login">
-                                <div class="form-group"><input type="text" placeholder="Email" class="form-control"></div>
-                                <div class="form-group"><input type="text" placeholder="Password" class="form-control"></div>
-                                <div class="form-group">
-                                    <button class="alt fancy-button" type="submit"> <span class="fa fa-lightbulb-o"></span> Login</button>
-                                </div>
-                            </form>
-
-                            <p>* Denotes mandatory field.</p>
-                            <p>** At least one telephone number is required.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- /Popup: Login 1 --> 
-
+		<%@include file="../inc/footer.jsp"%>
         <!-- Top -->
         <div class="to-top" id="to-top"> <i class="fa fa-long-arrow-up"></i> </div>
 

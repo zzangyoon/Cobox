@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.koreait.cobox.exception.CartException;
 import com.koreait.cobox.model.cartpay.repository.CartDAO;
 import com.koreait.cobox.model.domain.Cart;
+import com.koreait.cobox.model.domain.Member;
 
 @Service
 public class CartPayServiceImpl implements CartPayService{
@@ -22,8 +23,7 @@ public class CartPayServiceImpl implements CartPayService{
 
 	@Override
 	public List selectCartList(int member_id) {
-		// TODO Auto-generated method stub
-		return null;
+		return cartDAO.selectAll(member_id);
 	}
 
 	@Override
@@ -34,19 +34,26 @@ public class CartPayServiceImpl implements CartPayService{
 
 	@Override
 	public void insert(Cart cart) throws CartException{
+		cartDAO.duplicateCheck(cart);
 		cartDAO.insert(cart);
-		
 	}
 
 	@Override
-	public void update(Cart cart) {
-		// TODO Auto-generated method stub
-		
+	public void update(List<Cart> cartList) throws CartException{
+		for(Cart cart : cartList) {
+			cartDAO.update(cart);			
+		}
 	}
 
 	@Override
 	public void delete(Cart cart) {
 		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void delete(Member member) throws CartException{
+		cartDAO.delete(member);
 		
 	}
 

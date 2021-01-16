@@ -3,6 +3,7 @@ package com.koreait.cobox.admin.controller;
 import java.util.List;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,14 +43,18 @@ public class AdminSnackController implements ServletContextAware{
 	@Override
 	public void setServletContext(ServletContext servletContext) {
 		this.servletContext = servletContext;
-		fileManager.setSaveSnackDir(servletContext.getRealPath(fileManager.getSaveSnackDir()));
 		
+		//fileManager.setSaveSnackDir(servletContext.getRealPath(fileManager.getSaveSnackDir()));
+		fileManager.setSaveSnackDir(fileManager.getSaveSnackDir());
+		fileManager.setSaveMovieDir(fileManager.getSaveMovieDir());
+		fileManager.setSaveExcelDir(fileManager.getSaveExcelDir());
+		//retry regist product !!
 		logger.debug(fileManager.getSaveSnackDir());
 	}
 	
 	//스낵목록
 	@RequestMapping(value="/snack/list", method=RequestMethod.GET)
-	public ModelAndView getSnackList() {
+	public ModelAndView getSnackList(HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView("admin/snack/snack_list");
 		
 		List snackList = snackService.selectAll();
@@ -67,7 +72,7 @@ public class AdminSnackController implements ServletContextAware{
 	//스낵등록
 	@RequestMapping(value="/snack/regist", method=RequestMethod.POST, produces="text/html;charset=utf8")
 	@ResponseBody
-	public String registSnack(Snack snack) {
+	public String registSnack(HttpServletRequest request, Snack snack) {
 		//logger.debug("탑카테고리"+snack.getTopCategory().getTopcategory_id());
 		logger.debug("스낵명"+snack.getSnack_name());
 		logger.debug("가격"+snack.getPrice());
@@ -87,7 +92,7 @@ public class AdminSnackController implements ServletContextAware{
 	
 	//카테고리 가져오기
 	@RequestMapping(value="/snack/registform", method=RequestMethod.GET)
-	public ModelAndView getCategory() {
+	public ModelAndView getCategory(HttpServletRequest request) {
 		List topList = topCategoryService.selectAll();
 		
 		ModelAndView mav = new ModelAndView();
@@ -97,7 +102,7 @@ public class AdminSnackController implements ServletContextAware{
 	}
 	
 	@RequestMapping(value="/snack/snackmanager", method=RequestMethod.GET)
-	public ModelAndView editCategory() {
+	public ModelAndView editCategory(HttpServletRequest request) {
 		List topList = topCategoryService.selectAll();
 		//List subList = snackService.selectById(topcategory_id);
 		
@@ -121,7 +126,7 @@ public class AdminSnackController implements ServletContextAware{
 	
 	@RequestMapping(value="/snack/sublist", method=RequestMethod.GET, produces="application/json;charset=utf8")
 	@ResponseBody
-	public List getSubList(int topcategory_id) {
+	public List getSubList(HttpServletRequest request, int topcategory_id) {
 		List<Snack> subList = snackService.selectById(topcategory_id);
 		return subList;
 	}

@@ -24,7 +24,7 @@ public class MainController {
 	@Autowired
 	private MovieDAO movieDAO;
    
-   @RequestMapping(value="/", method=RequestMethod.GET)
+   @RequestMapping(value="/main", method=RequestMethod.GET)
    public String main() {
       
       return "main";

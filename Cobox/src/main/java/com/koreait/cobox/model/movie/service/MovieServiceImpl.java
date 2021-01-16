@@ -48,7 +48,7 @@ public class MovieServiceImpl implements MovieService{
 		//상품의 movie_id 를 이용해서 대표이미지명을 결정
 		//대표이미지 업로드
 		String basicImg=movie.getMovie_id()+"."+ext;
-		fileManager.saveFile(fileManager.getSaveDir()+File.separator+basicImg,movie.getRepImg());
+		fileManager.saveFile(fileManager.getSaveMovieDir()+File.separator+basicImg,movie.getRepImg());
 		
 		
 		

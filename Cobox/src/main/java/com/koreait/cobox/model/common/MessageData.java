@@ -1,5 +1,7 @@
 package com.koreait.cobox.model.common;
 
+import org.springframework.stereotype.Component;
+
 import lombok.Data;
 
 @Data
