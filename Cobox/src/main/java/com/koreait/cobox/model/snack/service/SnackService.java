@@ -10,6 +10,6 @@ public interface SnackService {
 	public List selectById(int topcategory_id);
 	public Snack select(int snack_id);
 	public void regist(FileManager fileManager, Snack snack);
-	public void update(Snack snack);
+	public void update(FileManager fileManager, Snack snack);
 	public void delete(int snack_id);
 }

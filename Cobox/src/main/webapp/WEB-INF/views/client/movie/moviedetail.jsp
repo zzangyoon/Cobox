@@ -1,7 +1,97 @@
+<%@page import="com.koreait.cobox.model.domain.Member"%>
+<%@page import="com.koreait.cobox.model.domain.Genre"%>
+<%@page import="com.koreait.cobox.model.domain.Movie"%>
 <%@ page contentType="text/html; charset=UTF-8"%>
+<%
+Movie movie=(Movie)request.getAttribute("movie");
+//Member member=(Member)request.getAttribute("member");
+%>
 <!DOCTYPE html>
 <html>
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+.reply-list{
+	background:yellow;
+
+}
+
+</style>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="http://cdn.ckeditor.com/4.15.1/standard/ckeditor.js"></script>
+<script>
+//온로드 하자마자 댓글 가져오기
+$(document).ready(function() {
+	//alert("온로드");
+	getCommentsList();
+	});
+
+	
+//댓글 목록 가져오기
+function getCommentsList(){
+	$.ajax({
+		url:"/client/comments/list",
+		type:"get",
+		data:{
+			movie_id:<%=movie.getMovie_id()%>
+		},
+		success:function(result){
+			
+			$("#list-area").html("");
+			
+			//alert("List사이즈"+result);
+			
+			var tag="";
+			for(var i=0; i<result.length; i++){
+			var commentsList = result[i];	
+			
+			
+			tag+="<p style=\"width:70%\">"+commentsList.msg+"</p>";
+			tag+="<p style=\"width:20%\">"+commentsList.cdate+"</p>";
+			tag+="<p style=\"width:10%\">"+commentsList.member_name+"</p>";
+			
+			}
+			$("#list-area").html(tag);
+		}
+	});
+}
+
+//if(session.getAttribute("member")==null
+//이면 "로그인을 해주세요"
+
+//else if()!=null
+//이면 "댓글등록"
+
+//댓글등록 요청
+function registComment(){
+	$.ajax({
+		url:"/client/comments/json",
+		type:"post",
+		data:{
+			msg:$("textarea[name='msg']").val(),
+			movie_id:<%=movie.getMovie_id()%>
+			<%-- member_id:<%=member.getMember_id()%> --%>
+		},
+		success:function(responseData){
+				var json = JSON.parse(responseData);
+				$('textarea').val('');
+			if(json.result==1){
+				//alert(json.msg);
+				getCommentsList();
+			}else{ 
+				alert(json.msg); 
+			}
+		}
+		  
+	});
+	
+}
+
+
+
+</script>
+
+
 <%@ include file="../inc/header.jsp"%>
 </head>
 <body class="single-cin">
@@ -11,12 +101,12 @@
 		<section class="container">
 			<div class="col-sm-12">
 				<div class="movie">
-					<h2 class="page-heading">The Hobbit: An Unexpected Journey</h2>
+					<h2 class="page-heading"><%=movie.getMovie_name() %></h2>
 
 					<div class="movie__info">
 						<div class="col-sm-4 col-md-3 movie-mobile">
 							<div class="movie__images">
-								<img alt='' src="/resources/images/movie/single-movie.jpg">
+								<img alt='' src="/resources/data/movie/<%=movie.getMovie_id()%>.<%=movie.getPoster()%>">
 							</div>
 						</div>
 
@@ -24,172 +114,65 @@
 							<p class="movie__time">169 min</p>
 
 							<p class="movie__option">
-								<strong>Country: </strong><a href="#">New Zeland</a>, <a
-									href="#">USA</a>
+							
+								<strong>장르: </strong><%for(Genre genre:movie.getGenreList()){ %><a><%=genre.getGenre_name() %>,</a>
+							<%} %> 
 							</p>
 							<p class="movie__option">
-								<strong>Year: </strong><a href="#">2012</a>
+								<strong>개봉일: </strong><a ><%=movie.getRelease() %></a>
 							</p>
 							<p class="movie__option">
-								<strong>Category: </strong><a href="#">Adventure</a>, <a
-									href="#">Fantazy</a>
+								<strong>감독: </strong><a><%=movie.getDirector() %></a>
 							</p>
 							<p class="movie__option">
-								<strong>Release date: </strong>December 12, 2012
+								<strong>배우: </strong><%=movie.getActor() %>
 							</p>
 							<p class="movie__option">
-								<strong>Director: </strong><a href="#">Peter Jackson</a>
+								<strong>관람연령: </strong><a ><%=movie.getRating().getRating_name()%></a>
 							</p>
 							<p class="movie__option">
-								<strong>Actors: </strong><a href="#">Martin Freeman</a>, <a
-									href="#">Ian McKellen</a>, <a href="#">Richard Armitage</a>, <a
-									href="#">Ken Stott</a>, <a href="#">Graham McTavish</a>, <a
-									href="#">Cate Blanchett</a>, <a href="#">Hugo Weaving</a>, <a
-									href="#">Ian Holm</a>, <a href="#">Elijah Wood</a> <a href="#">...</a>
+								<strong>줄거리: </strong><a><%=movie.getStory() %></a>							
 							</p>
-							<p class="movie__option">
-								<strong>Age restriction: </strong><a href="#">13</a>
-							</p>
-							<p class="movie__option">
-								<strong>Box office: </strong><a href="#">$1 017 003 568</a>
-							</p>
-
+							
+						
+							<p>
 							<a href="#" class="comment-link">Comments: 15</a>
 						</div>
 					</div>
-						<div class="clearfix"></div>
-					<h2 class="page-heading">The plot</h2>
-
-					<p class="movie__describe">Bilbo Baggins is swept into a quest
-						to reclaim the lost Dwarf Kingdom of Erebor from the fearsome
-						dragon Smaug. Approached out of the blue by the wizard Gandalf the
-						Grey, Bilbo finds himself joining a company of thirteen dwarves
-						led by the legendary warrior, Thorin Oakenshield. Their journey
-						will take them into the Wild; through treacherous lands swarming
-						with Goblins and Orcs, deadly Wargs and Giant Spiders,
-						Shapeshifters and Sorcerers. Although their goal lies to the East
-						and the wastelands of the Lonely Mountain first they must escape
-						the goblin tunnels, where Bilbo meets the creature that will
-						change his life forever ... Gollum. Here, alone with Gollum, on
-						the shores of an underground lake, the unassuming Bilbo Baggins
-						not only discovers depths of guile and courage that surprise even
-						him, he also gains possession of Gollum's "precious" ring that
-						holds unexpected and useful qualities ... A simple, gold ring that
-						is tied to the fate of all Middle-earth in ways Bilbo cannot begin
-						to ...</p>
 				</div>
+				
 				<div class="clearfix"></div>
-				<h2 class="page-heading">comments (15)</h2>
-
+				<h2 class="page-heading">영화 후기 (15)</h2>
+				
 				<div class="comment-wrapper">
 					<form id="comment-form" class="comment-form" method='post'>
 						<textarea class="comment-form__text"
-							placeholder='Add you comment here'></textarea>
-						<label class="comment-form__info">250 characters left</label>
-						<button type='submit'
-							class="btn btn-md btn--danger comment-form__btn">add
-							comment</button>
+							placeholder='후기를 작성하세요' name="msg" id="msg"></textarea>
+						
+						
+						<input type="button" class="btn btn-md btn--danger comment-form__btn" onClick="registComment()" value="댓글등록">
 					</form>
+				</div>	
 
 					<div class="comment-sets">
-
+	
 						<div class="comment">
 							<div class="comment__images">
 								<img alt='' src="/resources/images/comment/avatar.jpg">
 							</div>
-
-							<a href='#' class="comment__author"><span
-								class="social-used fa fa-facebook"></span>Roberta Inetti</a>
-							<p class="comment__date">today | 03:04</p>
-							<p class="comment__message">Lorem ipsum dolor sit amet,
-								consectetur adipiscing elit. Ut vitae enim sollicitudin, euismod
-								erat id, fringilla lacus. Cras ut rutrum lectus. Etiam ante
-								justo, volutpat at viverra a, mattis in velit. Morbi molestie
-								rhoncus enim, vitae sagittis dolor tristique et.</p>
-							<a href='#' class="comment__reply">Reply</a>
+							<div>
+						<div id="list-area">
+														
+						</div>
+						
 						</div>
 
-						<div class="comment">
-							<div class="comment__images">
-								<img alt='' src="/resources/images/comment/avatar-olia.jpg">
-							</div>
+					
+					
+						
+						
 
-							<a href='#' class="comment__author"><span
-								class="social-used fa fa-vk"></span>Olia Gozha</a>
-							<p class="comment__date">22.10.2013 | 14:40</p>
-							<p class="comment__message">Lorem ipsum dolor sit amet,
-								consectetur adipiscing elit. Ut vitae enim sollicitudin, euismod
-								erat id, fringilla lacus. Cras ut rutrum lectus. Etiam ante
-								justo, volutpat at viverra a, mattis in velit. Morbi molestie
-								rhoncus enim, vitae sagittis dolor tristique et.</p>
-							<a href='#' class="comment__reply">Reply</a>
-						</div>
-
-						<div class="comment comment--answer">
-							<div class="comment__images">
-								<img alt='' src="/resources/images/comment/avatar-dmitriy.jpg">
-							</div>
-
-							<a href='#' class="comment__author"><span
-								class="social-used fa fa-vk"></span>Dmitriy Pustovalov</a>
-							<p class="comment__date">today | 10:19</p>
-							<p class="comment__message">Lorem ipsum dolor sit amet,
-								consectetur adipiscing elit. Ut vitae enim sollicitudin, euismod
-								erat id, fringilla lacus. Cras ut rutrum lectus. Etiam ante
-								justo, volutpat at viverra a, mattis in velit. Morbi molestie
-								rhoncus enim, vitae sagittis dolor tristique et.</p>
-							<a href='#' class="comment__reply">Reply</a>
-						</div>
-
-						<div class="comment comment--last">
-							<div class="comment__images">
-								<img alt='' src="/resources/images/comment/avatar-sia.jpg">
-							</div>
-
-							<a href='#' class="comment__author"><span
-								class="social-used fa fa-facebook"></span>Sia Andrews</a>
-							<p class="comment__date">22.10.2013 | 12:31</p>
-							<p class="comment__message">Lorem ipsum dolor sit amet,
-								consectetur adipiscing elit. Ut vitae enim sollicitudin, euismod
-								erat id, fringilla lacus. Cras ut rutrum lectus. Etiam ante
-								justo, volutpat at viverra a, mattis in velit. Morbi molestie
-								rhoncus enim, vitae sagittis dolor tristique et.</p>
-							<a href='#' class="comment__reply">Reply</a>
-						</div>
-
-						<div id='hide-comments' class="hide-comments">
-							<div class="comment">
-								<div class="comment__images">
-									<img alt='' src="/resources/images/comment/avatar.jpg">
-								</div>
-
-								<a href='#' class="comment__author"><span
-									class="social-used fa fa-facebook"></span>Roberta Inetti</a>
-								<p class="comment__date">today | 03:04</p>
-								<p class="comment__message">Lorem ipsum dolor sit amet,
-									consectetur adipiscing elit. Ut vitae enim sollicitudin,
-									euismod erat id, fringilla lacus. Cras ut rutrum lectus. Etiam
-									ante justo, volutpat at viverra a, mattis in velit. Morbi
-									molestie rhoncus enim, vitae sagittis dolor tristique et.</p>
-								<a href='#' class="comment__reply">Reply</a>
-							</div>
-
-							<div class="comment">
-								<div class="comment__images">
-									<img alt='' src="/resources/images/comment/avatar-olia.jpg">
-								</div>
-
-								<a href='#' class="comment__author"><span
-									class="social-used fa fa-vk"></span>Olia Gozha</a>
-								<p class="comment__date">22.10.2013 | 14:40</p>
-								<p class="comment__message">Lorem ipsum dolor sit amet,
-									consectetur adipiscing elit. Ut vitae enim sollicitudin,
-									euismod erat id, fringilla lacus. Cras ut rutrum lectus. Etiam
-									ante justo, volutpat at viverra a, mattis in velit. Morbi
-									molestie rhoncus enim, vitae sagittis dolor tristique et.</p>
-								<a href='#' class="comment__reply">Reply</a>
-							</div>
-						</div>
+						
 
 						<div class="comment-more">
 							<a href="#" class="watchlist">Show more comments</a>

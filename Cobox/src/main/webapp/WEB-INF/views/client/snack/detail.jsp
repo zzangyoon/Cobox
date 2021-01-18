@@ -1,3 +1,4 @@
+<%@page import="com.koreait.cobox.model.common.Formatter"%>
 <%@page import="com.koreait.cobox.model.domain.Snack"%>
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%
@@ -88,7 +89,7 @@
                                     <div class="product_title_wrapper">
                                         <div itemprop="name" class="product_title entry-title">
                                             <%=snack.getSnack_name() %> <span class="thm-clr"></span>
-                                            <p class="font-3 fsz-18 no-mrgn price"> <b class="amount blk-clr"><%=snack.getPrice() %></b>  </p>       
+                                            <p class="font-3 fsz-18 no-mrgn price"> <b class="amount blk-clr"><%=Formatter.getCurrency(snack.getPrice()) %></b>  </p>       
                                         </div>
                                     </div>
 

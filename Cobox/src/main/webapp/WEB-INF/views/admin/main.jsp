@@ -14,8 +14,8 @@
 		절대방식이 막혀있으므로(보안폴더 ) 상대경로로 가져오면 가능하다! -->
 <%@ include file="./inc/main_navi.jsp" %>
 
-<h3>Dropdown Menu inside a Navigation Bar</h3>
-<p>Hover over the "Dropdown" link to see the dropdown menu.</p>
+<h3>WELCOME TO COBOX</h3>
+<p>COBOX에 오신걸 환영합니다</p>
 
 </body>
 </html>

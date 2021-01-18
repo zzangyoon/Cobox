@@ -58,6 +58,10 @@
 		}
 	}
 	
+	function checkout(){
+		location.href="/client/checkout/form"
+	}
+	
 	</script>
     </head>
 
@@ -161,9 +165,9 @@
                                                 </tr>
 
                                                 <tr class="shipping">
-                                                    <th>Promo Discount :</th>
+                                                    <th><!-- Promo Discount : --></th>
                                                     <td>
-                                                        <span class="drk-gry">50%</span>
+                                                        <span class="drk-gry"><!-- 50% --></span>
                                                     </td>
                                                 </tr>
                                                 <tr class="order-total">
@@ -178,7 +182,7 @@
                                 </div>
 
                                 <div class="wc-proceed-to-checkout text-center">
-                                    <a href="checkout.html" class="checkout-button button alt wc-forward">
+                                    <a href="javascript:checkout()" class="checkout-button button alt wc-forward">
                                         <i class="fa fa-check-circle"></i>Proceed to Checkout
                                     </a>
                                 </div>

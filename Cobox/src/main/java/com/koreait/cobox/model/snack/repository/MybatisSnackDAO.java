@@ -6,13 +6,15 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.koreait.cobox.exception.SnackDeleteFailException;
 import com.koreait.cobox.exception.SnackRegistException;
+import com.koreait.cobox.exception.SnackUpdateFailException;
 import com.koreait.cobox.model.domain.Snack;
 
 @Repository
 public class MybatisSnackDAO implements SnackDAO{
 	@Autowired
-	SqlSessionTemplate sqlSessionTemplate;
+	private SqlSessionTemplate sqlSessionTemplate;
 
 	@Override
 	public List selectAll() {
@@ -38,14 +40,19 @@ public class MybatisSnackDAO implements SnackDAO{
 	}
 
 	@Override
-	public void update(Snack snack) {
-		// TODO Auto-generated method stub
-		
+	public void update(Snack snack) throws SnackUpdateFailException{
+		int result = sqlSessionTemplate.update("Snack.update", snack);
+		if(result==0) {
+			throw new SnackUpdateFailException("스낵 정보 수정에 실패했습니다");
+		}
 	}
 
 	@Override
-	public void delete(int snack_id) {
-		// TODO Auto-generated method stub
+	public void delete(int snack_id) throws SnackDeleteFailException{
+		int result = sqlSessionTemplate.delete("Snack.delete", snack_id);
+		if(result==0) {
+			throw new SnackDeleteFailException("스낵 정보 삭제에 실패했습니다");
+		}
 		
 	}
 

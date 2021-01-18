@@ -6,9 +6,11 @@ import javax.servlet.http.HttpSession;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import com.koreait.cobox.exception.LoginRequiredException;
 
+@Component
 public class MemberSessionCheckAspect {
 	private static final Logger logger = LoggerFactory.getLogger(MemberSessionCheckAspect.class);
 

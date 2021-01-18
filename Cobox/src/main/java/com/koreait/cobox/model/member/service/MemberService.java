@@ -15,4 +15,3 @@ public interface MemberService {
 	public int idChk(Member member);//회원 아이디체크
 	public int passChk(Member member);//회원 비밀번호체크
 }
-

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.koreait.cobox.exception.MailSendException;
 import com.koreait.cobox.exception.MemberNotFoundException;
 import com.koreait.cobox.exception.MemberRegistException;
+import com.koreait.cobox.model.common.MailSender;
 import com.koreait.cobox.model.common.SecureManager;
 import com.koreait.cobox.model.domain.Member;
 import com.koreait.cobox.model.member.repository.MemberDAO;
@@ -21,6 +22,9 @@ public class MemberServiceImpl implements MemberService {
 
 	private MybatisMemberDAO mybatisMemberDAO;
 
+	// 메일발송 객체
+	@Autowired
+	private MailSender mailSender;
 
 	// 암호화 객체
 	@Autowired
@@ -42,7 +46,7 @@ public class MemberServiceImpl implements MemberService {
 	}
 	
 	@Override
-	public void insert(Member member) throws MemberRegistException {
+	public void insert(Member member) throws MemberRegistException, MailSendException {
 
 		// 암호화 처리
 		String secureData = secureManager.getSecureData(member.getPassword());
@@ -55,7 +59,9 @@ public class MemberServiceImpl implements MemberService {
 	public void update(Member member) throws MemberRegistException {
 		String secureData = secureManager.getSecureData(member.getPassword());// 비밀번호 암호화
 		member.setPassword(secureData); // 변환시켜 다시 VO에 대입
+		
 		memberDAO.update(member);
+		
 
 	}
 
@@ -75,9 +81,8 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public int passChk(Member member) {
-		// TODO Auto-generated method stub
-		return 0;
+		int result = memberDAO.passChk(member);
+		return result;
 	}
 
 }
-

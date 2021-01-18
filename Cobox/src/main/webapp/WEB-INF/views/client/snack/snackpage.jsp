@@ -1,11 +1,14 @@
+<%@page import="com.koreait.cobox.model.common.Pager"%>
 <%@page import="com.koreait.cobox.model.common.Formatter"%>
 <%@page import="com.koreait.cobox.model.domain.TopCategory"%>
 <%@page import="com.koreait.cobox.model.domain.Snack"%>
 <%@page import="java.util.List"%>
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%
-	List<Snack> snackList = (List)request.getAttribute("snackList");
 	List<TopCategory> topList = (List)request.getAttribute("topList");
+	//Pager pager = (Pager)request.getAttribute("pager");
+	//List<Snack> snackList = pager.getList();
+	List<Snack> snackList = (List)request.getAttribute("snackList");
 	//out.print("가져온 상품 수는 "+clientSnackList.size());
 %>
 <!DOCTYPE html>
@@ -72,13 +75,13 @@
 			});
 			
 			
+			
+				/*
 			$(".col-sm-6 button").on("click", function(){
-				alert(snack_id+"갖고 가려고?");
+				//alert(snack_id+"갖고 가려고?");
 				
 				var selectedQuantity = $("#snack_quantity option:selected").val();
 				
-				//alert(selectedQuantity);
-				/*
 				$.ajax({
 					url:"/client/cart/regist",
 					type:"post",
@@ -96,16 +99,15 @@
 						}
 					}
 				});
-				*/
 				//location.href="/client/cart/list"
-				location.href="/client/snack/detail?snack_id="+snack_id;
 			});
-		}
-		
-		function closePopup(){
-			//alert("닫을까?");
+				*/
+				location.href="/client/snack/detail?snack_id="+snack_id;
+			
 			
 		}
+		
+		
 		
 	</script>
 
@@ -167,7 +169,7 @@
                                                         	data-filename="<%=snack.getFilename() %>"
                                                         	></i>
                                                         </a>
-                                                        <a class="right-link" href="#"><i class="cart-icn"> </i></a>
+                                                        <!-- <a class="right-link" href="#"><i class="cart-icn"> </i></a> -->
                                                     </div>                                                   
                                                 </div>
                                             </div>
@@ -181,14 +183,7 @@
                                                                          
                                 </div>                               
                                 
-                                <nav class="woocommerce-pagination">
-                                    <ul class="page-numbers">
-                                        <li><a class="next page-numbers" href="#"> <i class="fa fa-angle-left"></i> </a></li>
-                                        <li><span class="page-numbers current">1</span></li>
-                                        <li><a class="page-numbers" href="#">2</a></li>
-                                        <li><a class="next page-numbers" href="#"> <i class="fa fa-angle-right"></i> </a></li>
-                                    </ul>
-                                </nav>
+                                
                             </div>
                             <!-- / Product Grid View -->                       
                         </div>        

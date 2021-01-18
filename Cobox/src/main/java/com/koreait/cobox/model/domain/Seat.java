@@ -6,7 +6,6 @@ import lombok.Data;
 public class Seat {
 	private int seat_id;
 	private int box_id;
-	private int reservation_id;
 	private String seat_name;
 	private String hold;
 }

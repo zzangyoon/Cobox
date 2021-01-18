@@ -12,13 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.koreait.cobox.exception.DeleteFailException;
-import com.koreait.cobox.exception.EditFailException;
 import com.koreait.cobox.exception.MemberNotFoundException;
 import com.koreait.cobox.exception.MemberRegistException;
-import com.koreait.cobox.model.common.MessageData;
 import com.koreait.cobox.model.domain.Member;
 import com.koreait.cobox.model.member.service.MemberService;
 
@@ -33,7 +29,7 @@ public class MemberController {
 	@RequestMapping(value="/member/join", method=RequestMethod.GET)
 	public ModelAndView getRegistForm(HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView("client/member/join");
-		return mav;
+		return mav;	
 	}
 
 	//회원가입폼 정보(insert)
@@ -70,7 +66,7 @@ public class MemberController {
 	
 	//로그인 요청 처리(select)
 	@RequestMapping(value="/member/login", method=RequestMethod.POST)
-	public String login(Member member, HttpServletRequest request) {
+	public String login(Member member, HttpServletRequest request) throws MemberNotFoundException{
 		//db에 존재여부 확인 
 				Member obj=memberService.select(member);
 				
@@ -80,69 +76,17 @@ public class MemberController {
 				
 				return "redirect:/client/main";
 	}
-	
-	//로그아웃 홈 요청 
-	@RequestMapping(value="/member/logoutform", method=RequestMethod.GET)
-	public ModelAndView getLogoutForm() {
-		ModelAndView mav = new ModelAndView("client/member/logout");
-		
-		return mav;
-	}
+
 	
 	//로그아웃 요청 처리 
-	@RequestMapping("/member/logout")
-	public ModelAndView logout(HttpServletRequest request) {
+	@RequestMapping(value="/member/logout", method=RequestMethod.GET)
+	public String logout(HttpServletRequest request) {
 		
 		request.getSession().invalidate(); //세션 무효화, 이시점부터 담겨진 데이터가 다 무효가 된다
 		
-		MessageData messageData = new MessageData();
-		messageData.setResultCode(1);
-		messageData.setMsg("로그아웃 되었습니다");
-		messageData.setUrl("/client/main");
-		
-		ModelAndView mav = new ModelAndView("/");
-		
-		mav.addObject("messageData", messageData);
-		return mav;
+		return "redirect:/client/main";
 	}
-	
-	@RequestMapping(value="/admin/member/edit", method=RequestMethod.POST)
-	@ResponseBody
-	public String edit(Member member) {
-		
-		memberService.update(member);
-		
-		StringBuffer sb=new StringBuffer();
-		sb.append("{");
-		sb.append("\"result\":1");
-		sb.append("}");
-		return sb.toString();
-	}
-	
-	// 회원 탈퇴(delete)
-	@RequestMapping("/client/member/delete")
-	public String Withdraw(HttpSession session, Member member, RedirectAttributes rttr) throws MemberNotFoundException {
-	 
-	 Member membervo = (Member)session.getAttribute("member");
-	 
-	 String oldPass = membervo.getPassword();
-	 String newPass = member.getPassword();
-	     
-	 //회원탈퇴를 위해 입력한 비밀번호와 기존 비밀번호가 일치하는지 비교하기 위해 equals 사용.
-	 //바로 윗줄에서 기존 비밀번호와 입력한 비밀번호를 비교하기 위해 변수를 다르게 적용.
-	 if(!(oldPass.equals(newPass))) {
-	  rttr.addFlashAttribute("msg", false);
-	  return "redirect:/client/main";
-	 }
-	 
-	 //데이터에서 고객정보 삭제
-	 memberService.delete(member);
-	 
-	 //탈퇴와 동시에 로그아웃시키기
-	 session.invalidate();
-	  
-	 return "redirect:/client/main";
-	}
+
 	
 	//예외 핸들러 2가지 처리
 	@ExceptionHandler(MemberRegistException.class)
@@ -157,26 +101,6 @@ public class MemberController {
 		return sb.toString();
 	}
 	
-	@ExceptionHandler(EditFailException.class)
-	@ResponseBody
-	public String editException(EditFailException e) {
-		StringBuffer sb=new StringBuffer();
-		sb.append("{");
-		sb.append("result:0");
-		sb.append("}");		
-		System.out.println("수정 요청실패"+sb);
-		return sb.toString();
-	}
-	
-	@ExceptionHandler(DeleteFailException.class)
-	@ResponseBody
-	public String deleteException(DeleteFailException e) {
-		StringBuffer sb=new StringBuffer();
-		sb.append("{");
-		sb.append("result:0");
-		sb.append("}");		
-		System.out.println("삭제실패"+sb);
-		return sb.toString();
-	}
+
 
 }

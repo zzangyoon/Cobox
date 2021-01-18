@@ -1,8 +1,10 @@
+<%@page import="com.koreait.cobox.model.common.Pager"%>
 <%@page import="com.koreait.cobox.model.domain.Snack"%>
 <%@page import="java.util.List"%>
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%
-	List<Snack> snackList = (List)request.getAttribute("snackList");
+	Pager pager =(Pager)request.getAttribute("pager");
+	List<Snack> snackList = (List)pager.getList();
 %>
 <!DOCTYPE html>
 <html>
@@ -32,6 +34,10 @@ $(function(){
 		location.href="/admin/snack/registform";
 	});	
 });
+
+function getDetail(snack_id){
+	location.href="/admin/snack/detailList?snack_id="+snack_id;
+}
 </script>
 <h2>Snack List</h2>
 
@@ -47,10 +53,10 @@ $(function(){
   <%for(int i=0; i<snackList.size(); i++){ %>
   <%Snack snack = snackList.get(i); %>
   <tr>
-    <td>1</td>
+    <td><%=snack.getSnack_id() %></td>
     <td><img src="/resources/data/snack/<%=snack.getSnack_id()%>.<%=snack.getFilename()%>" width="50px"></td>
     <td><%=snack.getTopCategory().getName() %></td>
-    <td><%=snack.getSnack_name() %></td>
+    <td><a href="javascript:getDetail(<%=snack.getSnack_id()%>)"><%=snack.getSnack_name() %></td>
     <td><%=snack.getPrice() %></td>
     <td><%=snack.getAmount() %></td>
   </tr>

@@ -1,4 +1,8 @@
+
 <%@page import="com.koreait.cobox.model.domain.Movie"%>
+<%@page import="com.koreait.cobox.model.domain.Rating"%>
+<%@page import="com.koreait.cobox.model.domain.Genre"%>
+<%@page import="java.util.List"%>
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%
 Movie movie=(Movie)request.getAttribute("movie");
@@ -21,6 +25,7 @@ input[type=text], select, textarea {
 	margin-bottom: 16px;
 	resize: vertical;
 }
+
 input[type=button] {
 	background-color: #4CAF50;
 	color: white;
@@ -29,22 +34,28 @@ input[type=button] {
 	border-radius: 4px;
 	cursor: pointer;
 }
+
 input[type=button]:hover {
 	background-color: #45a049;
 }
+
 .container {
 	border-radius: 5px;
 	background-color: #f2f2f2;
 	padding: 20px;
 }
+
+
 .box {
 	width: 100px;
 	float: left;
 	padding: 5px;
 }
+
 .box>img {
 	width: 100%;
 }
+
 .close {
 	color: red;
 	cursor: pointer;
@@ -57,6 +68,7 @@ input[type=button]:hover {
 
 <script type="text/javascript">
 var genre=[];//선택한 장르사이즈를 담는 배열
+
 	$(function(){
 		CKEDITOR.replace("story");
 		
@@ -66,15 +78,18 @@ var genre=[];//선택한 장르사이즈를 담는 배열
 		
 		$($("input[type='button']")[1]).click(function(){
 			del();
+		
 		});
 		
 		//글수정 요청
 		function edit(){
+			if(confirm("수정하시겠어요?")){
 			$("form").attr({
 				action:"/admin/movie/edit",
 				method:"post"
 			});
 			$("form").submit();
+		}
 		}
 		//글삭제 요청
 		function del(){
@@ -93,6 +108,7 @@ var genre=[];//선택한 장르사이즈를 담는 배열
 			//체크박스의 길이 얻기 
 			var ch = $("input[name='genre_name']");
 			var len = $(ch).length; //반복문이용하려고..
+
 			genre = [];//배열 초기화
 			console.log("채우기 전 genre의 길이는",genre.length);
 			
@@ -128,9 +144,10 @@ var genre=[];//선택한 장르사이즈를 담는 배열
 <body>
 	<%@ include file="../inc/main_navi.jsp"%>
 
-	<h3>영화 등록</h3>
+	<h3>영화 수정</h3>
 	<div class="container">
 		<form>
+			
 			<h4>장르선택(복수 가능)</h4>
 			<input type="checkbox" id="genre_name" name="genre_name" value="hrror" />hrror
 			<input type="checkbox" id="genre_name" name="genre_name" value="drama" />drama
@@ -156,7 +173,7 @@ var genre=[];//선택한 장르사이즈를 담는 배열
 			<input type="checkbox" id="genre_name" name="genre_name" value="history" />history
 			<input type="checkbox" id="genre_name" name="genre_name" value="war" />war
 			
-
+ 			<input type="text" name="movie_id" value="<%=movie.getMovie_id()%>">
 			<input type="text" name="movie_name" placeholder="영화명" value="<%=movie.getMovie_name()%>"> 
 
 			<select name="rating_id">		
@@ -167,7 +184,7 @@ var genre=[];//선택한 장르사이즈를 담는 배열
 				<option value="4">adult</option>
 			</select>
 			
-		
+			
 			 <input type="text" name="director" value="<%=movie.getDirector()%>">
 			 <input type="text" name="actor" value="<%=movie.getActor()%>">
 			 <input type="text" name="release" id="datepicker1" value="<%=movie.getRelease()%>">
@@ -178,7 +195,7 @@ var genre=[];//선택한 장르사이즈를 담는 배열
 			</p>
 
 			<input type="button" value="글수정">
-			<input type="button" value="글삭제">
+			<input type="button" value="글삭제" >
 			<input type="button" value="목록보기" onClick="location.href='/admin/movie/list'">
 			
 		</form>

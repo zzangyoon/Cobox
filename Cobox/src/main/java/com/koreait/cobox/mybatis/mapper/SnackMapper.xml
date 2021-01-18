@@ -29,9 +29,17 @@
 		select * from snack where topcategory_id=#{topcategory_id}
 	</select>
 	
-	<select id="select" parameterType="int" resultType="Snack">
+	<select id="select" parameterType="int" resultMap="snackTopcategoryMap">
 		select * from snack where snack_id=#{snack_id}
 	</select>
 	
+	<delete id="delete" parameterType="int">
+		delete from snack where snack_id=#{snack_id}
+	</delete>
+	
+	<update id="update" parameterType="Snack">
+		update snack set topcategory_id=#{topCategory.topcategory_id}, snack_name=#{snack_name}, price=#{price}, 
+		amount=#{amount}, detail=#{detail}, filename=#{filename} where snack_id=#{snack_id}
+	</update>
 	
 </mapper>

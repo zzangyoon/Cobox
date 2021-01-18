@@ -9,11 +9,15 @@ import com.koreait.cobox.exception.CartException;
 import com.koreait.cobox.model.cartpay.repository.CartDAO;
 import com.koreait.cobox.model.domain.Cart;
 import com.koreait.cobox.model.domain.Member;
+import com.koreait.cobox.model.payment.repository.PaymethodDAO;
 
 @Service
 public class CartPayServiceImpl implements CartPayService{
 	@Autowired
 	private CartDAO cartDAO;
+	
+	@Autowired
+	PaymethodDAO paymethodDAO;
 	
 	@Override
 	public List selectCartList() {
@@ -55,6 +59,11 @@ public class CartPayServiceImpl implements CartPayService{
 	public void delete(Member member) throws CartException{
 		cartDAO.delete(member);
 		
+	}
+
+	@Override
+	public List selectPaymethodList() {
+		return paymethodDAO.selectAll();
 	}
 
 

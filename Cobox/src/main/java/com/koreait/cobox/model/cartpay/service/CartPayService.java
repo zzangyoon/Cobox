@@ -16,5 +16,5 @@ public interface CartPayService {
 	public void delete(Member member);
 
 	//Pay
-	
+	public List selectPaymethodList();
 }

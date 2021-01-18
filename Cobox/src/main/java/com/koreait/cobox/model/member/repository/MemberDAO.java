@@ -15,4 +15,3 @@ public interface MemberDAO {
 	public int passChk(Member member);//패스워드 중복체크
 	
 }
-

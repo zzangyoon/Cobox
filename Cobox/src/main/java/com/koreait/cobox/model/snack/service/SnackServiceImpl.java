@@ -38,21 +38,25 @@ public class SnackServiceImpl implements SnackService{
 		snack.setFilename(ext);
 		
 		snackDAO.insert(snack);	//db
-
 		String snackImg = snack.getSnack_id()+"."+ext;
 		fileManager.saveFile(fileManager.getSaveSnackDir()+File.separator+snackImg, snack.getSnackImg());
 		
 	}
 
 	@Override
-	public void update(Snack snack) {
-		// TODO Auto-generated method stub
+	public void update(FileManager fileManager, Snack snack) {
+		String ext = fileManager.getExtend(snack.getSnackImg().getOriginalFilename());	//확장자
+		snack.setFilename(ext);
 		
+		snackDAO.update(snack);
+		
+		String snackImg = snack.getSnack_id()+"."+ext;
+		fileManager.saveFile(fileManager.getSaveSnackDir()+File.separator+snackImg, snack.getSnackImg());
 	}
 
 	@Override
 	public void delete(int snack_id) {
-		// TODO Auto-generated method stub
+		snackDAO.delete(snack_id);
 		
 	}
 

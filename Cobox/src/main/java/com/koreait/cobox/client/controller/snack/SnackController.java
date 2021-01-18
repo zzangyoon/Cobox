@@ -19,12 +19,13 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.koreait.cobox.exception.SnackRegistException;
 import com.koreait.cobox.model.common.FileManager;
+import com.koreait.cobox.model.common.Pager;
 import com.koreait.cobox.model.domain.Snack;
 import com.koreait.cobox.model.domain.TopCategory;
 import com.koreait.cobox.model.snack.service.SnackService;
 import com.koreait.cobox.model.snack.service.TopCategoryService;
 
-//관리자 모드에서의 스낵 관리
+
 @Controller
 public class SnackController implements ServletContextAware{
 	private static final Logger logger = LoggerFactory.getLogger(SnackController.class);
@@ -37,6 +38,9 @@ public class SnackController implements ServletContextAware{
 	
 	@Autowired
 	private FileManager fileManager;
+	
+	@Autowired
+	private Pager pager;
 	
 	private ServletContext servletContext;
 	
@@ -81,10 +85,15 @@ public class SnackController implements ServletContextAware{
 	public ModelAndView getClientSnackList(HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView("client/snack/snackpage");
 		
-		List snackList = snackService.selectAll();
 		List topList = topCategoryService.selectAll();
-		mav.addObject("snackList", snackList);
+		List snackList = snackService.selectAll();
+		logger.debug("snackList 중 이름 "+snackList.size());
+		//pager.init(request, snackList);
+		
+		
 		mav.addObject("topList", topList);
+		//mav.addObject("pager", pager);
+		mav.addObject("snackList", snackList);
 		
 		return mav;
 	}

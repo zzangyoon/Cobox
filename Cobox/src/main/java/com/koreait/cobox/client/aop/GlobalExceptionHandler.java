@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.koreait.cobox.exception.CartException;
 import com.koreait.cobox.exception.LoginAsyncRequiredException;
 import com.koreait.cobox.exception.LoginRequiredException;
 import com.koreait.cobox.model.common.MessageData;
@@ -12,6 +13,7 @@ import com.koreait.cobox.model.common.MessageData;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 	@ExceptionHandler(LoginRequiredException.class)
+	@ResponseBody
 	public ModelAndView handleException(LoginRequiredException e) {
 		ModelAndView mav = new ModelAndView();
 		
@@ -23,5 +25,6 @@ public class GlobalExceptionHandler {
 		
 		return mav;
 	}
+
 
 }

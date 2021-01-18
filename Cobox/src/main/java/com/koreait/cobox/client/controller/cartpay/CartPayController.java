@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -99,6 +100,23 @@ public class CartPayController {
 		
 		return mav;
 	}
+	
+	//체크아웃
+	@RequestMapping(value="/checkout/form", method=RequestMethod.GET)
+	public String checkoutForm(Model model, HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		
+		Member member = (Member)session.getAttribute("member");
+		List cartList = cartPayService.selectCartList(member.getMember_id());
+		model.addAttribute("cartList", cartList);
+		
+		//결제수단
+		List paymethodList = cartPayService.selectPaymethodList();
+		model.addAttribute("paymethodList", paymethodList);
+		
+		return "client/cart/checkout";
+	}
+	
 	
 	//장바구니 관련 예외처리 핸들러
 	@ExceptionHandler(CartException.class)

@@ -19,6 +19,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.koreait.cobox.exception.SnackRegistException;
 import com.koreait.cobox.model.common.FileManager;
+import com.koreait.cobox.model.common.MessageData;
+import com.koreait.cobox.model.common.Pager;
 import com.koreait.cobox.model.domain.Snack;
 import com.koreait.cobox.model.domain.TopCategory;
 import com.koreait.cobox.model.snack.service.SnackService;
@@ -36,6 +38,9 @@ public class AdminSnackController implements ServletContextAware{
 	private SnackService snackService;
 	
 	@Autowired
+	private Pager pager;
+	
+	@Autowired
 	private FileManager fileManager;
 	
 	private ServletContext servletContext;
@@ -49,7 +54,7 @@ public class AdminSnackController implements ServletContextAware{
 		fileManager.setSaveMovieDir(fileManager.getSaveMovieDir());
 		fileManager.setSaveExcelDir(fileManager.getSaveExcelDir());
 		//retry regist product !!
-		logger.debug(fileManager.getSaveSnackDir());
+		//logger.debug(fileManager.getSaveSnackDir());
 	}
 	
 	//스낵목록
@@ -58,7 +63,8 @@ public class AdminSnackController implements ServletContextAware{
 		ModelAndView mav = new ModelAndView("admin/snack/snack_list");
 		
 		List snackList = snackService.selectAll();
-		mav.addObject("snackList", snackList);
+		pager.init(request, snackList);
+		mav.addObject("pager", pager);
 		
 		return mav;
 	}
@@ -128,11 +134,59 @@ public class AdminSnackController implements ServletContextAware{
 	@ResponseBody
 	public List getSubList(HttpServletRequest request, int topcategory_id) {
 		List<Snack> subList = snackService.selectById(topcategory_id);
+		//select * from snack where topcategory_id=?
+		
 		return subList;
 	}
 	
+	@RequestMapping(value="/snack/detail", method =RequestMethod.GET, produces="application/json;charset=utf8")
+	@ResponseBody
+	public Snack getDetailList(HttpServletRequest request, int snack_id) {
+		logger.debug("snack_id"+snack_id);
+		Snack snack = snackService.select(snack_id);
+		
+		return snack;
+	}
 	
+	//스낵 삭제
+	@RequestMapping(value="/snack/del", method=RequestMethod.GET)
+	public String delSnack(HttpServletRequest request, int snack_id) {
+		logger.debug("snack_id="+snack_id);
+		snackService.delete(snack_id);
+
+		
+		return "redirect:/admin/snack/list";
+	}
 	
+	//스낵 수정
+	@RequestMapping(value="/snack/edit", method=RequestMethod.POST)
+	public ModelAndView updateSnack(HttpServletRequest request, Snack snack) {
+		snackService.update(fileManager, snack);
+		
+		
+		MessageData messageData = new MessageData();
+		messageData.setResultCode(1);
+		messageData.setMsg("스낵이 수정되었습니다");
+		messageData.setUrl("/admin/snack/detailList");
+		
+		ModelAndView mav = new ModelAndView();
+		mav.addObject("messageData", messageData);
+		mav.setViewName("client/error/message");
+		
+		return mav;
+	}
+	
+	//상세보기
+	@RequestMapping(value="/snack/detailList", method=RequestMethod.GET)
+	public ModelAndView getSnackDetailList(HttpServletRequest request, int snack_id) {
+		Snack snack = snackService.select(snack_id);
+		ModelAndView mav = new ModelAndView();
+		List topList = topCategoryService.selectAll();
+		mav.addObject("snack", snack);
+		mav.addObject("topList", topList);
+		mav.setViewName("admin/snack/snack_detail");
+		return mav;
+	}
 	
 	//예외처리 핸들러
 	@ExceptionHandler(SnackRegistException.class)

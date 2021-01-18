@@ -1,4 +1,8 @@
 package com.koreait.cobox.client.controller.comments;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -6,44 +10,74 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
-import com.koreait.cobox.client.controller.movie.MovieController;
+import com.koreait.cobox.admin.controller.AdminMovieController;
 import com.koreait.cobox.exception.DMLException;
 import com.koreait.cobox.model.comments.repository.CommentsDAO;
+import com.koreait.cobox.model.comments.repository.MybatisCommentsDAO;
+import com.koreait.cobox.model.comments.service.CommentsService;
 import com.koreait.cobox.model.domain.Comments;
+import com.koreait.cobox.model.domain.Member;
 import com.koreait.cobox.model.domain.Movie;
 import com.koreait.cobox.model.movie.repository.MovieDAO;
-import com.koreait.cobox.model.movie.service.CommentsService;
 
 @Controller
 public class CommentsController {
-	private static final Logger logger=LoggerFactory.getLogger(MovieController.class);
-	
+	private static final Logger logger=LoggerFactory.getLogger(AdminMovieController.class);
 	@Autowired
 	private MovieDAO movieDAO;
-	
 	@Autowired
 	private CommentsDAO commentsDAO;
-	
 	@Autowired
 	private CommentsService commentsService;
 	
-	@RequestMapping(value="/client/comments/regist",method=RequestMethod.POST)
-	public String registComments(Comments comments,Movie movie) throws DMLException{
-		logger.debug("댓글번호: "+ comments.getComments_id());
-		//logger.debug("회원아이디: "+ comments.getComments_id());
-		logger.debug("영화번호: "+ movie.getMovie_id());
-		logger.debug("댓글내용: "+ comments.getMsg());
-		logger.debug("작성시간: "+ comments.getCdate());
+	
+	//댓글 insert
+	
+	@RequestMapping(value="/comments/json",method=RequestMethod.POST,produces="text/html;charset=utf8")
+	@ResponseBody
+	public String commentsRegist(HttpServletRequest request, Comments comments) {
+		HttpSession session = request.getSession();
+		Member member=(Member)session.getAttribute("member");
 		
+		String movie_id=request.getParameter("movie_id");
+		String msg=request.getParameter("msg");
 		
-		commentsService.insert(comments);
+		logger.debug(movie_id);
+		logger.debug(msg);
+
+		comments.setMovie_id(Integer.parseInt(movie_id));
+		comments.setMsg(msg);
+		comments.setMember_name(member.getName());
+		
+		commentsDAO.insert(comments);
+		
+		//logger.debug("result"+result);
 		
 		StringBuilder sb=new StringBuilder();
-		   sb.append("{");
-		   sb.append("\"result\":1,");
-		   sb.append("\"msg\":\"댓글 등록성공\"");
-		   sb.append("}");
+		sb.append("{");
+		sb.append("\"result\":1,");
+		sb.append("\"msg\":\"댓글등록성공\"");
+		sb.append("}");
+		
 		return sb.toString();
 	}
+	//목록 가져오기
+	@RequestMapping(value="/comments/list",method=RequestMethod.GET)
+	@ResponseBody
+	public List CommentsList(HttpServletRequest request, int movie_id) {
+		//HttpSession session = request.getSession();
+		//Member member=(Member)session.getAttribute("member");
+		
+		List<Comments> commentsList = commentsService.selectAll(movie_id);
+
+				
+		
+		return commentsList;
+	}
+	
+	
+	
 }
